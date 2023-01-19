@@ -17,4 +17,6 @@ public interface ProductoService {
     public void delete(Integer id);
     
     public List<Producto> findAll();
+    
+    public Producto findById(Integer id) throws Exception;
 }

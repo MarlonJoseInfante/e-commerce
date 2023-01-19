@@ -1,5 +1,3 @@
-
-
 package com.practice.ecommerce.service;
 
 import com.practice.ecommerce.model.Producto;
@@ -10,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ProductoServiceImpl implements ProductoService{
-    
+public class ProductoServiceImpl implements ProductoService {
+
     @Autowired
     private ProductoRepository productoRepository;
 
@@ -27,7 +25,7 @@ public class ProductoServiceImpl implements ProductoService{
 
     @Override
     public void update(Producto producto) {
-         productoRepository.save(producto);
+        productoRepository.save(producto);
     }
 
     @Override
@@ -37,8 +35,22 @@ public class ProductoServiceImpl implements ProductoService{
 
     @Override
     public List<Producto> findAll() {
-        
+
         return productoRepository.findAll();
+    }
+
+    @Override
+    public Producto findById(Integer id) throws Exception {
+        if (id == null) {
+            throw new Exception("El id no debe ser nulo o estar vacio");
+        }
+        Optional<Producto> op = productoRepository.findById(id);
+        if (op.isPresent()) {
+            return op.get();
+        } else {
+            throw new Exception("No existe ningun producto con el id solicitado");
+
+        }
     }
 
 }

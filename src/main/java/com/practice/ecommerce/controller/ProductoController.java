@@ -5,11 +5,13 @@ package com.practice.ecommerce.controller;
 import com.practice.ecommerce.model.Producto;
 import com.practice.ecommerce.model.Usuario;
 import com.practice.ecommerce.service.ProductoService;
+import java.util.logging.Level;
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -39,6 +41,24 @@ public class ProductoController {
         Usuario u= new Usuario(1, "", "", "", "", "", "", "", null, null);
         producto.setUsuario(u);
         productoService.save(producto);
+        return "redirect:/productos";
+    }
+    
+    @GetMapping("/edit/{id}")
+    public String edit(@PathVariable Integer id, Model model){
+        try {
+            Producto producto= productoService.findById(id);
+            LOGGER.info("Producto buscado: {} ", producto);
+            model.addAttribute("producto", producto);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+            return "/productos/edit";
+    }
+    
+    @PostMapping("/update")
+    public String update(Producto producto){
+        productoService.update(producto);
         return "redirect:/productos";
     }
 }
