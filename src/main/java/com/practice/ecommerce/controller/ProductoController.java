@@ -5,6 +5,8 @@ package com.practice.ecommerce.controller;
 import com.practice.ecommerce.model.Producto;
 import com.practice.ecommerce.model.Usuario;
 import com.practice.ecommerce.service.ProductoService;
+import com.practice.ecommerce.service.UploadFileService;
+import java.io.IOException;
 import java.util.logging.Level;
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @RequestMapping("/productos")
@@ -23,6 +27,9 @@ public class ProductoController {
     
     @Autowired
     private ProductoService productoService;
+    
+    @Autowired
+    private UploadFileService upload;
 
     @GetMapping("")
     public String show(Model model){
@@ -36,10 +43,24 @@ public class ProductoController {
     }
     
     @PostMapping("/save")
-    public String save(Producto producto){
+    public String save(Producto producto, @RequestParam("img") MultipartFile file) throws IOException{
         LOGGER.info("Este es el producto{} ", producto);
         Usuario u= new Usuario(1, "", "", "", "", "", "", "", null, null);
         producto.setUsuario(u);
+        //imagen
+        if (producto.getId()== null) {// cuando se crea el producto
+            String nombreImagen= upload.saveImage(file);
+            producto.setImagen(nombreImagen);
+        }else{
+            if (file.isEmpty()) {
+                Producto p= productoService.get(producto.getId()).get();
+                producto.setImagen(p.getImagen());
+            } else {
+                String imagen= upload.saveImage(file);
+                producto.setImagen(imagen);
+            }
+        }
+        
         productoService.save(producto);
         return "redirect:/productos";
     }
