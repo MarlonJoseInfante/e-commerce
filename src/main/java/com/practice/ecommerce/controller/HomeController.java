@@ -2,6 +2,7 @@
 
 package com.practice.ecommerce.controller;
 
+import com.practice.ecommerce.model.Producto;
 import com.practice.ecommerce.service.ProductoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,8 +28,11 @@ public class HomeController {
     }
     
     @GetMapping("/productohome/{id}")
-    public String productoHome(@PathVariable Integer id){
+    public String productoHome(@PathVariable Integer id, Model model) throws Exception{
+        
         LOG.info("Id producto enviado como parametro {}", id);
+        Producto producto= productoService.findById(id);
+        model.addAttribute("producto", producto);
         return "/usuario/productohome";
     }
 }
