@@ -50,14 +50,23 @@ public class HomeController {
     }
     
     @PostMapping("/cart")
-    public String addCart(@RequestParam Integer id, @RequestParam Integer cantidad) throws Exception{
+    public String addCart(@RequestParam Integer id, @RequestParam Integer cantidad, Model model) throws Exception{
         DetalleOrden detalleOrden= new DetalleOrden();
         Producto producto= new Producto();
         double sumaTotal=0;
         producto= productoService.findById(id);
         LOG.info("Producto añadido {}", producto);
         LOG.info("Cantidad {}", cantidad);
-        
+        detalleOrden.setCantidad(cantidad);
+        detalleOrden.setPrecio(producto.getPrecio());
+        detalleOrden.setTotal(producto.getPrecio()*cantidad);
+        detalleOrden.setNombre(producto.getNombre());
+        detalleOrden.setProducto(producto);
+        detalles.add(detalleOrden);
+        sumaTotal= detalles.stream().mapToDouble(td -> td.getTotal()).sum();
+        orden.setTotal(sumaTotal);
+        model.addAttribute("cart", detalles);
+        model.addAttribute("orden", orden);
         return "/usuario/carrito";
     }
 }
