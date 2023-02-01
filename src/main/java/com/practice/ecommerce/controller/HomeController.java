@@ -3,6 +3,8 @@ package com.practice.ecommerce.controller;
 import com.practice.ecommerce.model.DetalleOrden;
 import com.practice.ecommerce.model.Orden;
 import com.practice.ecommerce.model.Producto;
+import com.practice.ecommerce.model.Usuario;
+import com.practice.ecommerce.service.IUsuarioService;
 import com.practice.ecommerce.service.ProductoService;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +33,9 @@ public class HomeController {
 
     //datos de la orden
     Orden orden = new Orden();
+    
+    @Autowired
+   private IUsuarioService  usuarioService;
 
     @GetMapping("")
     public String home(Model model) {
@@ -104,8 +109,11 @@ public class HomeController {
     }
     
     @GetMapping("/order")
-    public String order(){
-        
+    public String order(Model model){
+        Usuario usuario= usuarioService.findById(1).get();
+        model.addAttribute("cart", detalles);
+        model.addAttribute("orden", orden);
+        model.addAttribute("usuario", usuario);
         return"/usuario/resumenorden";
     }
 }
